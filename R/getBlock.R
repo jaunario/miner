@@ -11,7 +11,7 @@
 #' @param include_style A logical value of whether the block's
 #'    style should also be included in the output (defaults to TRUE).
 #'
-#' @return A numeric vector of length one or two with the type ID
+#' @return A numeric or character vector of length one or two with the type ID/name
 #'    and style, if `include_style` is `TRUE`, of the block
 #'    at position (x, y, z). You can use [find_item()] to
 #'    find the name of the block type based on this returned ID.
@@ -39,9 +39,19 @@ getBlock <- function(x,y,z, include_style = TRUE)
     z <- floor(as.numeric(z))
     result <- mc_sendreceive(merge_data("world.getBlockWithData", x, y, z))
 
-    # convert to vector of length 2
-    out <- stats::setNames(as.numeric(strsplit(result, ",")[[1]]), c("typeID", "style"))
-    if(include_style){
+    parts <- strsplit(result, ",")[[1]]
+    num_parts <- suppressWarnings(as.numeric(parts))
+    if (!any(is.na(num_parts))) {
+        parts <- num_parts
+    }
+
+    if (length(parts) >= 2) {
+        out <- stats::setNames(parts[1:2], c("typeID", "style"))
+    } else {
+        out <- stats::setNames(parts[1], "typeID")
+    }
+
+    if(include_style && length(out) >= 2){
       return(out)
     } else {
       return(out[1])
@@ -69,7 +79,7 @@ getBlock <- function(x,y,z, include_style = TRUE)
 #' @param z1 A numeric value giving the ending east / west position of
 #'    the opposite corner of the cuboid.
 #'
-#' @return An 3-D array of integers where each integer gives the ID of the
+#' @return An 3-D array of integers or character strings where each element gives the ID or name of the
 #'    type of a block in the cuboid.
 #'
 #' @examples
@@ -97,11 +107,16 @@ getBlocks <- function(x0,y0,z0, x1,y1,z1)
     result <- mc_sendreceive(merge_data("world.getBlocks", x0, y0, z0, x1, y1, z1))
 
     # blocks come back as a vector with values separated by commas
-    result <- as.numeric(strsplit(result, ",")[[1]])
-    # the order of things is a bit tricky
-    result <- array(result, dim=c(abs(z1-z0)+1, abs(x1-x0)+1, abs(y1-y0)+1))
-    result <- aperm(result, c(2,3,1))
+    parts <- strsplit(result, ",")[[1]]
+    num_parts <- suppressWarnings(as.numeric(parts))
+    if (!any(is.na(num_parts))) {
+        parts <- num_parts
+    }
 
-    dimnames(result) <- list(x0:x1, y0:y1, z0:z1)
-    result
+    # the order of things is a bit tricky
+    res_array <- array(parts, dim=c(abs(z1-z0)+1, abs(x1-x0)+1, abs(y1-y0)+1))
+    res_array <- aperm(res_array, c(2,3,1))
+
+    dimnames(res_array) <- list(x0:x1, y0:y1, z0:z1)
+    res_array
 }
