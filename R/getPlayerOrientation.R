@@ -25,13 +25,20 @@
 
 getPlayerRotation <- function(player_id = NULL)
 {
-  if(is.null(player_id)){
-    p <- mc_sendreceive("player.getRotation()")
-  } else {
-    p <- mc_sendreceive(merge_data("entity.getRotation", player_id))
-  }
+    p <- NA
 
-  as.numeric(p)
+    if(is.null(player_id)){
+        # API seems to give wrong results for many angles!
+        # while(is.na(p)) p <- mc_sendreceive("player.getRotation()")
+        d <- getPlayerDirection(player_id)
+        p <- atan2(d[3], d[1])*180/pi
+        p <- (p - 90) # convert to minecraft rotation angle
+    } else {
+        while(is.na(p)) p <- mc_sendreceive(merge_data("entity.getRotation", player_id))
+    }
+
+    p <- as.numeric(p)
+    (p + 360*10) %% 360 # convert to angle 0-360
 }
 
 
@@ -62,10 +69,11 @@ getPlayerRotation <- function(player_id = NULL)
 #' @export
 getPlayerPitch <- function(player_id = NULL) {
 
+    p <- NA
   if(is.null(player_id)){
-    p <- mc_sendreceive("player.getPitch()")
+    while(is.na(p)) p <- mc_sendreceive("player.getPitch()")
   } else {
-    p <- mc_sendreceive(merge_data("entity.getPitch", player_id))
+    while(is.na(p)) p <- mc_sendreceive(merge_data("entity.getPitch", player_id))
   }
 
   as.numeric(p)
@@ -102,12 +110,15 @@ getPlayerPitch <- function(player_id = NULL) {
 #' @export
 getPlayerDirection <- function(player_id = NULL) {
 
-  if(is.null(player_id)){
-    z <- mc_sendreceive("player.getDirection()")
-  } else {
-    z <- mc_sendreceive(merge_data("entity.getDirection", player_id))
-  }
+    z <- NA
+    if(is.null(player_id)){
+      while(is.na(z) || is.null(z) || z=="")
+          z <- mc_sendreceive("player.getDirection()")
+    } else {
+        while(is.na(z) || is.null(z) || z=="")
+            z <- mc_sendreceive(merge_data("entity.getDirection", player_id))
+    }
 
-  as.numeric(strsplit(z, ",")[[1]])
+    as.numeric(strsplit(z, ",")[[1]])
 
 }

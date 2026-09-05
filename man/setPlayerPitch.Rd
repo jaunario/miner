@@ -4,15 +4,19 @@
 \alias{setPlayerPitch}
 \title{Set a player's pitch}
 \usage{
-setPlayerPitch(angle, id = NULL)
+setPlayerPitch(angle, player_id = NULL)
 }
 \arguments{
 \item{angle}{Angle of pitch (-90 is straight up and +90 is straight down)}
 
-\item{id}{Player or entity ID}
+\item{player_id}{Player or entity ID}
 }
 \description{
 Set a player's pitch
+}
+\details{
+Angles < -90 degrees are treated as -90 degrees (straight up),
+and angles > 90 degrees are treated as +90 degrees (straight down).
 }
 \note{
 Only works with \href{https://github.com/zhuowei/RaspberryJuice}{RaspberryJuice}

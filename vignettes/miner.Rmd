@@ -1,17 +1,21 @@
 ---
-title: "Learning to program in R with miner"
+title: "Program in Minecraft with R and miner"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Learn to program in Minecraft with miner}
+  %\VignetteIndexEntry{Program in Minecraft with R and miner}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
 ```
 
-## Introduction
+<link rel=stylesheet type="text/css" href="https://kbroman.org/stylesheets/kbroman_vignette.css"></script>
+
+<!-- paste badges here -->
+
+## Introduction <a href="https://github.com/kbroman/miner"><img src="https://kbroman.org/miner/miner_logo.png" align="right" height="138" alt="miner logo"/></a>
 
 The miner package provides a simple interface to the Minecraft world. Use R functions
 to connect with a Minecraft server and control the world within.
@@ -19,14 +23,25 @@ to connect with a Minecraft server and control the world within.
 The purpose of this package is to teach new programmers about R. See the effect of
 your R programs directly in Minecraft!
 
-### Installation
+## Installation
 
-To install this package:
+Install the [miner](https://github.com/kbroman/miner) and
+[craft](https://github.com/kbroman/craft) packages from [R
+universe](https://r-universe.dev):
+
+```r
+install.packages(c("miner", "craft"), repos=c("https://kbroman.r-universe.dev", "https://cloud.r-project.org"))
+```
+
+Alternatively, use the
+[remotes](https://remotes.r-lib.org) package to install them from
+GitHub:
 
 ```r
 # install.packages("remotes")
 library(remotes)
-install_github('kbroman/miner')
+install_github('kbroman/miner', build_vignettes=TRUE)
+install_github('kbroman/craft', build_vignettes=TRUE)
 ```
 
 To use the package you will need to:
@@ -41,10 +56,10 @@ mc_connect('52.1.2.3') ## use your server IP address here, or 127.0.0.1 if insta
 ```
 
 Full installation instructions are provided in the online book, [R
-programming with Minecraft](https://kbroman.org/miner_book).
+programming with Minecraft](https://kbroman.org/miner_book/).
 
 
-### About Minecraft
+## About Minecraft
 
 Minecraft is a virtual world, arranged as a 3-D grid of blocks of various materials
 (air, wood, stone, etc) and populated by players, animals and monsters. The state of
@@ -94,7 +109,7 @@ Once you have a Player ID, you can move the player around. Note that in Minecraf
 is the East/West axis, "z" is the North/South axis, and "y" is the vertical axis.
 
 ```r
-myloc <- getPlayerPost(myid)
+myloc <- getPlayerPos(myid)
 setPlayerPos(myloc[1]+1,myloc[2],myloc[3],player_id=myid)  # move player 1 tile East
 setPlayerPos(myloc[1],myloc[2]+50,myloc[3],player_id=myid) # raise player 50 tiles in the air
 ```
@@ -143,7 +158,8 @@ Additional commands were added in later versions of the API:
   particular ID
 * `getPlayerId`: get the numeric ID for a player, given their name.
 * `getEntityTypes`: get a data frame of the available entity types
-  (with columns `id` and `name`).
+  (with columns `id` and `name`). See also `find_entity` for searching
+  for an entity by name.
 * `spawnEntity`: spawn a particular entity at a specific position.
 * `setPlayerRotation`, `setPlayerPitch`, `setPlayerDirection`: like
   the corresponding `get` functions, but for setting a player's
@@ -201,3 +217,7 @@ with Minecraft](https://kbroman.org/miner_book/).
 
 Many of the ideas and techniques in this package were adapted from
 ["Learn to program with Minecraft" by Craid Richardson (No Starch Press, 2016)](https://nostarch.com/programwithminecraft).
+
+---
+
+[![CC BY](https://i.creativecommons.org/l/by/3.0/88x31.png)](https://creativecommons.org/licenses/by/3.0/)

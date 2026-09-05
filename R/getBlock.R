@@ -79,7 +79,7 @@ getBlock <- function(x,y,z, include_style = TRUE)
 #' @param z1 A numeric value giving the ending east / west position of
 #'    the opposite corner of the cuboid.
 #'
-#' @return An 3-D array of integers or character strings where each element gives the ID or name of the
+#' @return A 3-D array of integers or character strings where each element gives the ID or name of the
 #'    type of a block in the cuboid.
 #'
 #' @examples
@@ -104,6 +104,11 @@ getBlocks <- function(x0,y0,z0, x1,y1,z1)
     y1 <- floor(as.numeric(y1))
     z1 <- floor(as.numeric(z1))
 
+    # reorder the cuboid values
+    if(x0 > x1) { tmp <- x1; x1 <- x0; x0 <- tmp }
+    if(y0 > y1) { tmp <- y1; y1 <- y0; y0 <- tmp }
+    if(z0 > z1) { tmp <- z1; z1 <- z0; z0 <- tmp }
+
     result <- mc_sendreceive(merge_data("world.getBlocks", x0, y0, z0, x1, y1, z1))
 
     # blocks come back as a vector with values separated by commas
@@ -114,7 +119,7 @@ getBlocks <- function(x0,y0,z0, x1,y1,z1)
     }
 
     # the order of things is a bit tricky
-    res_array <- array(parts, dim=c(abs(z1-z0)+1, abs(x1-x0)+1, abs(y1-y0)+1))
+    res_array <- array(parts, dim=c(z1-z0+1, x1-x0+1, y1-y0+1))
     res_array <- aperm(res_array, c(2,3,1))
 
     dimnames(res_array) <- list(x0:x1, y0:y1, z0:z1)
