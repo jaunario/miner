@@ -35,6 +35,14 @@ test_that("setBlock and setBlocks work with numeric and character ids", {
 
             setBlocks(0, 0, 0, 1, 1, 1, "diamond_block")
             expect_equal(tail(sent_msgs, 1), "world.setBlocks(0,0,0,1,1,1,diamond_block)")
+
+            # Test passing item data frame from find_item
+            copper_item <- data.frame(name = "Block of Copper", id = "copper_block", style = 0, stringsAsFactors = FALSE)
+            setBlock(10, 20, 30, copper_item)
+            expect_equal(tail(sent_msgs, 1), "world.setBlock(10,20,30,copper_block)")
+
+            setBlocks(0, 0, 0, 1, 1, 1, copper_item)
+            expect_equal(tail(sent_msgs, 1), "world.setBlocks(0,0,0,1,1,1,copper_block)")
         }
     )
 })
@@ -72,6 +80,26 @@ test_that("getBlock and getBlocks work with numeric and string responses", {
         {
             res <- getBlock(10, 20, 30)
             expect_equal(res, c(typeID = "stone"))
+        }
+    )
+
+    # Test fallback to world.getBlock when world.getBlockWithData returns 0 for modern blocks
+    mock_sendreceive <- function(cmd) {
+        if (startsWith(cmd, "world.getBlockWithData")) {
+            return("0,0")
+        } else if (startsWith(cmd, "world.getBlock")) {
+            return("copper_block")
+        }
+        return("0")
+    }
+    with_mock(
+        mc_sendreceive = mock_sendreceive,
+        {
+            res <- getBlock(10, 20, 30)
+            expect_equal(res, c(typeID = "copper_block", style = "0"))
+
+            res_nostyle <- getBlock(10, 20, 30, include_style = FALSE)
+            expect_equal(res_nostyle, c(typeID = "copper_block"))
         }
     )
 

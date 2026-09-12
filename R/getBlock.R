@@ -45,6 +45,27 @@ getBlock <- function(x,y,z, include_style = TRUE)
         parts <- num_parts
     }
 
+    # If world.getBlockWithData returned air (0 or "0" or "AIR"), check world.getBlock
+    # because modern Minecraft (1.13+) blocks without legacy IDs return 0 in getBlockWithData
+    if (length(parts) > 0 && (parts[1] == 0 || tolower(as.character(parts[1])) %in% c("0", "air"))) {
+        block_type <- mc_sendreceive(merge_data("world.getBlock", x, y, z))
+        if (!is.null(block_type) && block_type != "" && block_type != "0" && tolower(block_type) != "air") {
+            bt_parts <- strsplit(block_type, ",")[[1]]
+            num_bt_parts <- suppressWarnings(as.numeric(bt_parts))
+            if (!any(is.na(num_bt_parts))) {
+                bt_parts <- num_bt_parts
+            }
+            if (length(bt_parts) >= 2) {
+                parts <- bt_parts
+            } else {
+                parts[1] <- bt_parts[1]
+                if (length(parts) < 2) {
+                    parts <- c(parts[1], "0")
+                }
+            }
+        }
+    }
+
     if (length(parts) >= 2) {
         out <- stats::setNames(parts[1:2], c("typeID", "style"))
     } else {
