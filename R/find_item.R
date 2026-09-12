@@ -43,33 +43,40 @@ find_item <-
         stop("Provide either name or id")
 
     if(!is.null(name)) {
-        if(name %in% mc_items$name) {
-            return(mc_items[mc_items$name==name,,drop=FALSE])
+        if (name %in% mc_items$name) {
+            return(mc_items[mc_items$name == name, , drop = FALSE])
+        } else if (name %in% mc_items$id) {
+            return(mc_items[mc_items$id == name, , drop = FALSE])
         } else {
-            result <- grep(name, mc_items$name, ignore.case=TRUE)
-            if(length(result)==0) {
+            result_name <- grep(name, mc_items$name, ignore.case = TRUE)
+            result_id <- grep(name, mc_items$id, ignore.case = TRUE)
+            result <- unique(c(result_name, result_id))
+            if (length(result) == 0) {
                 message("no matching item found")
                 return(NULL)
             }
-            return(mc_items[result,,drop=FALSE])
+            return(mc_items[result, , drop = FALSE])
         }
     }
     if(!is.null(id)) {
         if(!is.null(style)) {
-            result <- (mc_items$id==id & mc_items$style==style)
-            if(sum(result)==0) {
+            result <- (mc_items$id == id & mc_items$style == style)
+            if (sum(result) == 0) {
+                result <- (mc_items$id == id)
+            }
+            if(sum(result) == 0) {
                 message("no matching item found")
                 return(NULL)
             }
-            return(mc_items[result,])
+            return(mc_items[result, , drop = FALSE])
         }
         else {
-            result <- (mc_items$id==id)
-            if(sum(result)==0) {
+            result <- (mc_items$id == id)
+            if(sum(result) == 0) {
                 message("no matching item found")
                 return(NULL)
             }
-            return(mc_items[result,])
+            return(mc_items[result, , drop = FALSE])
         }
     }
 }

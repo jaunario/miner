@@ -23,6 +23,17 @@ setBlock <- function(x, y, z, id, style=0)
     y <- floor(as.numeric(y))
     z <- floor(as.numeric(z))
 
+    if (is.data.frame(id) || is.list(id)) {
+        if ("style" %in% names(id) && (missing(style) || is.null(style) || style == 0)) {
+            style <- id$style[1]
+        }
+        if ("id" %in% names(id)) {
+            id <- id$id[1]
+        } else if ("name" %in% names(id)) {
+            id <- id$name[1]
+        }
+    }
+
     num_id <- suppressWarnings(as.numeric(id))
     if (!is.na(num_id)) {
         id <- floor(num_id)
@@ -70,6 +81,14 @@ setBlocks <- function(x0,y0,z0, x1,y1,z1,  id)
     x1 <- floor(as.numeric(x1))
     y1 <- floor(as.numeric(y1))
     z1 <- floor(as.numeric(z1))
+
+    if (is.data.frame(id) || is.list(id)) {
+        if ("id" %in% names(id)) {
+            id <- id$id[1]
+        } else if ("name" %in% names(id)) {
+            id <- id$name[1]
+        }
+    }
 
     num_id <- suppressWarnings(as.numeric(id))
     if (!is.na(num_id)) {
