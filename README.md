@@ -12,6 +12,8 @@ using [RaspberryJuice](https://dev.bukkit.org/projects/raspberryjuice)
 and either [Spigot](https://www.spigotmc.org/) or
 [Minecraft:Pi](https://minecraft.net/en-us/edition/pi/).
 
+> **Note:** While Karl Broman's original repository is no longer actively maintained by him, this updated version of the package is maintained and usable with modern Minecraft updates and recent Spigot server releases.
+
 The miner package provides a few simple functions to manipulate the
 Minecraft world from R. The intent of this package is to encourage new
 R users to learn R by writing scripts to do fun things in Minecraft.
